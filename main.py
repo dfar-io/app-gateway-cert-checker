@@ -10,17 +10,17 @@ from dotenv import load_dotenv
 
 def get_env_vars():
     '''Validates and returns environment variables.'''
-    dict = {
+    env_dict = {
         'client_id': os.getenv('CLIENT_ID'),
         'client_secret': os.getenv('CLIENT_SECRET'),
         'tenant_id': os.getenv('TENANT_ID')
     }
 
-    for value in dict.items():
+    for value in env_dict.items():
         if value is None:
             raise OSError(f'{property} environment variable not set.')
 
-    return dict
+    return env_dict
 
 env = get_env_vars()
 
@@ -66,6 +66,7 @@ def get_ssl_expiration(host):
     return datetime.date(year, month, day)
 
 def get_hosts_requiring_renewal(app_gateways):
+    ''' Given App Gateways, get the hosts that require renewal.'''
     result = []
     for app_gateway in app_gateways:
         http_listeners = app_gateway['httpListeners']
@@ -78,7 +79,7 @@ def get_hosts_requiring_renewal(app_gateways):
 
                 if delta < datetime.timedelta(days=30):
                     result.append(hostname)
-    
+
     return result
 
 
