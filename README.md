@@ -1,3 +1,5 @@
+![pylint](https://github.com/dfar-io/app-gateway-cert-checker/actions/workflows/pylint.yml/badge.svg)
+
 # app-gateway-cert-checker
 
 Automatically checks certs for all Azure Application Gateways.
