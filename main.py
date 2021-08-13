@@ -69,19 +69,23 @@ def get_hosts_requiring_renewal(app_gateways):
     ''' Given App Gateways, get the hosts that require renewal.'''
     result = []
     for app_gateway in app_gateways:
-        http_listeners = app_gateway['httpListeners']
+        valid_https_listeners = list(filter(is_http_listener_valid, app_gateway['httpListeners']))
 
-        for http_listener in http_listeners:
-            hostname = http_listener['hostName']
-            if hostname is not None and http_listener['protocol'] == 'Https':
-                expiration_date =  get_ssl_expiration(hostname)
-                delta = expiration_date - datetime.date.today()
+        for https_listener in valid_https_listeners:
+            hostname = https_listener['hostName']
+            expiration_date =  get_ssl_expiration(hostname)
+            delta = expiration_date - datetime.date.today()
 
-                if delta < datetime.timedelta(days=30):
-                    result.append(hostname)
+            if delta < datetime.timedelta(days=30):
+                result.append(hostname)
 
     return result
 
+def is_http_listener_valid(http_listener):
+    ''' Given an HTTP Listener, confirms it havs a hostname and is HTTPS. '''
+    hostname = http_listener['hostName']
+    protocol = http_listener['protocol']
+    return hostname is not None and protocol == 'Https'
 
 def main():
     '''Main function.'''
