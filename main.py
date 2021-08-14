@@ -60,7 +60,7 @@ def get_subscriptions_ids():
 
 def get_app_gateways(subscription_ids):
     '''Gets all app gateways for a collection of subscription IDs '''
-    app_gateways = []
+    all_app_gateways = []
     for subscription_id in subscription_ids:
         try:
             result = subprocess.run(["az", "network", "application-gateway", "list",
@@ -70,9 +70,12 @@ def get_app_gateways(subscription_ids):
         except subprocess.CalledProcessError:
             print('Failure when gathering app gateways.')
             sys.exit(1)
-        app_gateways.append(json.loads(result.stdout))
 
-    return app_gateways
+        app_gateways = json.loads(result.stdout)
+        for app_gateway in app_gateways:
+            all_app_gateways.append(app_gateway)
+
+    return all_app_gateways
 
 def get_ssl_expiration(host):
     '''Gets the SSL cert expiration date of a host.'''
