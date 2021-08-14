@@ -32,20 +32,47 @@ def verify_az():
 
 def login_to_az():
     '''Logs into az using service principal provided in env. variables'''
-    subprocess.run(["az", "login", "--service-principal",
-        "-u", env['CLIENT_ID'],
-        "-p", env['CLIENT_SECRET'],
-        "--tenant", env['TENANT_ID']],
-        check=True,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL)
+    try:
+        subprocess.run(["az", "login", "--service-principal",
+            "-u", env['CLIENT_ID'],
+            "-p", env['CLIENT_SECRET'],
+            "--tenant", env['TENANT_ID']],
+            check=True,
+            stdout=subprocess.DEVNULL)
+    # Different behavior since we don't want to expose env. variables
+    except subprocess.CalledProcessError:
+        print('Failure when logging in.')
+        sys.exit(1)
 
-def get_app_gateways():
-    '''Gets all app gateways'''
-    result = subprocess.run(["az", "network", "application-gateway", "list"],
+
+def get_subscriptions_ids():
+    ''' Gets all subscriptions for an account '''
+    subscription_ids = []
+    cli_command = subprocess.run(["az", "account", "list"],
                              check=True,
                              capture_output=True)
-    return json.loads(result.stdout)
+
+    subscriptions_json = json.loads(cli_command.stdout)
+    for subscription in subscriptions_json:
+        subscription_ids.append(subscription['id'])
+
+    return subscription_ids
+
+def get_app_gateways(subscription_ids):
+    '''Gets all app gateways for a collection of subscription IDs '''
+    app_gateways = []
+    for subscription_id in subscription_ids:
+        try:
+            result = subprocess.run(["az", "network", "application-gateway", "list",
+                                    "--subscription", subscription_id],
+                                    check=True,
+                                    capture_output=True)
+        except subprocess.CalledProcessError:
+            print('Failure when gathering app gateways.')
+            sys.exit(1)
+        app_gateways.append(json.loads(result.stdout))
+
+    return app_gateways
 
 def get_ssl_expiration(host):
     '''Gets the SSL cert expiration date of a host.'''
@@ -95,7 +122,8 @@ def main():
     login_to_az()
 
     hosts_requiring_renewal = []
-    app_gateways = get_app_gateways()
+    subscription_ids = get_subscriptions_ids()
+    app_gateways = get_app_gateways(subscription_ids)
     hosts_requiring_renewal = get_hosts_requiring_renewal(app_gateways)
 
     if len(hosts_requiring_renewal) > 0:
