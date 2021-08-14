@@ -11,14 +11,14 @@ from dotenv import load_dotenv
 def get_env_vars():
     '''Validates and returns environment variables.'''
     env_dict = {
-        'client_id': os.getenv('CLIENT_ID'),
-        'client_secret': os.getenv('CLIENT_SECRET'),
-        'tenant_id': os.getenv('TENANT_ID')
+        'CLIENT_ID': os.getenv('CLIENT_ID'),
+        'CLIENT_SECRET': os.getenv('CLIENT_SECRET'),
+        'TENANT_ID': os.getenv('TENANT_ID')
     }
 
     for value in env_dict.items():
-        if value is None:
-            raise OSError(f'{property} environment variable not set.')
+        if value[1] is None:
+            raise OSError(f'{value[0]} environment variable not set.')
 
     return env_dict
 
@@ -33,9 +33,9 @@ def verify_az():
 def login_to_az():
     '''Logs into az using service principal provided in env. variables'''
     subprocess.run(["az", "login", "--service-principal",
-        "-u", env['client_id'],
-        "-p", env['client_secret'],
-        "--tenant", env['tenant_id']],
+        "-u", env['CLIENT_ID'],
+        "-p", env['CLIENT_SECRET'],
+        "--tenant", env['TENANT_ID']],
         check=True,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL)

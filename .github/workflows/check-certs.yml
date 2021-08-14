@@ -19,9 +19,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install --user -r requirements.txt
     - name: Check certs
-      run: |
-        python main.py
+      run: python main.py
       env:
-        client_id: ${{ secrets.CLIENT_ID }}
-        client_secret: ${{ secrets.CLIENT_SECRET }}
-        tenant_id: ${{ secrets.TENANT_ID }}
+        CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        TENANT_ID: ${{ secrets.TENANT_ID }}
