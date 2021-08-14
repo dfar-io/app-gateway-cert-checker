@@ -76,7 +76,7 @@ def get_hosts_requiring_renewal(app_gateways):
             expiration_date =  get_ssl_expiration(hostname)
             delta = expiration_date - datetime.date.today()
 
-            if delta < datetime.timedelta(days=30):
+            if delta < datetime.timedelta(days=120):
                 result.append(hostname)
 
     return result
