@@ -1,5 +1,6 @@
 ![pylint](https://github.com/dfar-io/app-gateway-cert-checker/actions/workflows/pylint.yml/badge.svg)
-[![Maintainability](https://api.codeclimate.com/v1/badges/5c497c6a72ec4d7b296a/maintainability)](https://codeclimate.com/github/dfar-io/app-gateway-cert-checker/maintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/984972906be25b9f2bfc/maintainability)](https://codeclimate.com/github/dfar-io/app-gateway-cert-checker/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/984972906be25b9f2bfc/test_coverage)](https://codeclimate.com/github/dfar-io/app-gateway-cert-checker/test_coverage)
 
 # app-gateway-cert-checker
 
